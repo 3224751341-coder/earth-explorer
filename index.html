@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌍 地球脉动 — 探索世界各地的奇观与生灵</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Noto Sans SC', -apple-system, sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+    overflow-x: hidden;
+  }
+
+  /* ===== Full-Screen Sections ===== */
+  .region {
+    scroll-snap-align: start;
+    position: relative;
+    width: 100%; height: 100vh; min-height: 700px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+
+  /* ===== Background Gradients per Region ===== */
+  .bg-savanna  { background: linear-gradient(170deg, #1a0f00 0%, #4a2500 20%, #e8751a 45%, #ffb347 65%, #ffe0a0 85%, #87CEEB 100%); }
+  .bg-amazon   { background: linear-gradient(170deg, #0a1a0a 0%, #0d3b0d 15%, #1a5c1a 35%, #2d8a2d 55%, #4db84d 75%, #a8e6a8 100%); }
+  .bg-arctic   { background: linear-gradient(170deg, #0a1628 0%, #1a3050 20%, #4a7fa8 45%, #a8d8f0 65%, #e8f4f8 85%, #ffffff 100%); }
+  .bg-oceania  { background: linear-gradient(170deg, #1a0a00 0%, #4a2000 15%, #d4822e 40%, #ffc87a 60%, #ffe4b8 80%, #87CEEB 100%); }
+  .bg-himalaya { background: linear-gradient(170deg, #0a0a1a 0%, #1a2040 20%, #3a5080 40%, #8090c0 60%, #d0d8f0 80%, #ffffff 100%); }
+  .bg-deepsea  { background: linear-gradient(170deg, #000020 0%, #000840 25%, #001868 45%, #0038a0 65%, #0068d0 85%, #00a0e0 100%); }
+  .bg-sahara   { background: linear-gradient(170deg, #1a1000 0%, #4a3000 20%, #c48838 45%, #e8c878 65%, #ffe8b0 85%, #fff8e8 100%); }
+  .bg-asia     { background: linear-gradient(170deg, #0a1a0a 0%, #1a3a10 20%, #3a6a20 40%, #6aaa40 60%, #a0d880 80%, #e0f8d0 100%); }
+
+  /* ===== Decorative Elements ===== */
+  .sun {
+    position: absolute; top: 8%; right: 15%;
+    width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, #fff7e0, #ffcc33, #ff8800);
+    box-shadow: 0 0 120px rgba(255,180,40,0.6), 0 0 300px rgba(255,140,20,0.3);
+    animation: sunPulse 3s ease-in-out infinite;
+  }
+  @keyframes sunPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 120px rgba(255,180,40,0.6), 0 0 300px rgba(255,140,20,0.3); }
+    50% { transform: scale(1.05); box-shadow: 0 0 140px rgba(255,180,40,0.8), 0 0 340px rgba(255,140,20,0.4); }
+  }
+
+  .moon {
+    position: absolute; top: 6%; right: 18%;
+    width: 100px; height: 100px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff, #e8e8f0, #c0c8e0);
+    box-shadow: 0 0 60px rgba(200,210,240,0.5), 0 0 150px rgba(180,200,240,0.2);
+    animation: moonFloat 4s ease-in-out infinite;
+  }
+  @keyframes moonFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* clouds */
+  .cloud {
+    position: absolute; background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    animation: cloudDrift linear infinite;
+  }
+  .cloud::before, .cloud::after {
+    content: ''; position: absolute; background: inherit; border-radius: 50%;
+  }
+  @keyframes cloudDrift {
+    0% { transform: translateX(-150px); }
+    100% { transform: translateX(calc(100vw + 150px)); }
+  }
+
+  /* stars */
+  .star {
+    position: absolute; background: #fff; border-radius: 50%;
+    animation: twinkle ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.4); }
+  }
+
+  /* mountains silhouette */
+  .mountains {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 35%;
+    background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.3) 100%);
+    clip-path: polygon(0% 100%, 5% 55%, 12% 70%, 20% 40%, 28% 65%, 35% 35%, 42% 60%, 50% 30%, 58% 50%, 65% 38%, 72% 58%, 80% 42%, 88% 62%, 95% 50%, 100% 65%, 100% 100%);
+  }
+
+  /* ===== Content Card ===== */
+  .card {
+    position: relative; z-index: 10;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 28px;
+    padding: 48px 44px;
+    max-width: 620px;
+    width: 90%;
+    animation: cardIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card .emoji-hero {
+    font-size: 80px; line-height: 1.2; margin-bottom: 12px;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));
+  }
+
+  .card h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 38px; font-weight: 900; margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+
+  .card .subtitle {
+    font-size: 16px; color: rgba(255,255,255,0.65);
+    margin-bottom: 20px; letter-spacing: 1px;
+  }
+
+  .card .desc {
+    font-size: 17px; line-height: 1.9; color: rgba(255,255,255,0.85);
+    margin-bottom: 28px;
+  }
+
+  /* Animals */
+  .animals {
+    display: flex; flex-wrap: wrap; gap: 10px;
+  }
+  .animal-chip {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 20px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 40px;
+    font-size: 15px; font-weight: 500;
+    transition: all 0.25s;
+    cursor: default;
+    backdrop-filter: blur(10px);
+  }
+  .animal-chip:hover {
+    background: rgba(255,255,255,0.22);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  }
+  .animal-chip .chip-icon { font-size: 28px; }
+
+  /* ===== Navigation Dots ===== */
+  .nav-dots {
+    position: fixed; right: 22px; top: 50%; transform: translateY(-50%);
+    z-index: 1000; display: flex; flex-direction: column; gap: 14px;
+  }
+  .nav-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    border: 2px solid rgba(255,255,255,0.4);
+    cursor: pointer; transition: all 0.3s;
+  }
+  .nav-dot:hover, .nav-dot.active {
+    background: #fff; border-color: #fff;
+    box-shadow: 0 0 14px rgba(255,255,255,0.6);
+    transform: scale(1.3);
+  }
+
+  /* ===== Hero Section ===== */
+  .hero {
+    scroll-snap-align: start; height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: radial-gradient(ellipse at center, #1a2a3a 0%, #050d18 100%);
+    position: relative; overflow: hidden;
+  }
+  .hero .globe {
+    font-size: 140px;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 20px 40px rgba(0,160,255,0.4));
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+  .hero h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 52px; font-weight: 900; letter-spacing: 4px;
+    margin-top: 20px;
+    background: linear-gradient(180deg, #fff 0%, #a0c8e8 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero .sub {
+    font-size: 18px; color: rgba(255,255,255,0.5);
+    margin-top: 12px; letter-spacing: 6px;
+  }
+  .hero .scroll-hint {
+    position: absolute; bottom: 40px;
+    font-size: 14px; color: rgba(255,255,255,0.4);
+    animation: fadeHint 2s ease-in-out infinite;
+  }
+  @keyframes fadeHint {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .card { padding: 32px 24px; }
+    .card h1 { font-size: 28px; }
+    .card .emoji-hero { font-size: 56px; }
+    .hero h1 { font-size: 32px; }
+    .hero .globe { font-size: 100px; }
+    .nav-dots { right: 10px; gap: 10px; }
+    .nav-dot { width: 10px; height: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Hero ===== -->
+<section class="hero">
+  <div class="globe">🌍</div>
+  <h1>地球脉动</h1>
+  <p class="sub">PLANET EARTH · 奇观与生灵</p>
+  <p class="scroll-hint">↓ 向下探索 ↓</p>
+  <div id="stars-container"></div>
+</section>
+
+<!-- ===== 1. 非洲草原 ===== -->
+<section class="region bg-savanna" id="savanna">
+  <div class="sun"></div>
+  <div class="mountains"></div>
+  <div class="card">
+    <div class="emoji-hero">🦁🐘🦒</div>
+    <h1>非洲稀树草原</h1>
+    <p class="subtitle">AFRICAN SAVANNA · 坦桑尼亚 / 肯尼亚</p>
+    <p class="desc">
+      广袤无垠的金色草原，地球上最壮观的野生动物王国。每年超过两百万只角马横渡马拉河，狮群在落日余晖下巡视领地，长颈鹿在合欢树间优雅踱步。这里是生命最原始的律动之地。
+    </p>
+    <div class="animals">
+      <span class="animal-chip"><span class="chip-icon">🦁</span>非洲狮</span>
+      <span class="animal-chip"><span class="chip-icon">🐘</span>非洲象</span>
+      <span class="animal-chip"><span class="chip-icon">🦒</span>马赛长颈鹿</span>
+      <span class="animal-chip"><span class="chip-icon">🦓</span>斑马</span>
+      <span class="animal-chip"><span class="chip-icon">🐆</span>猎豹</span>
+      <span class="animal-chip"><span class="chip-icon">🦏</span>黑犀牛</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 2. 亚马逊雨林 ===== -->
+<section class="region bg-amazon" id="amazon">
+  <div class="card">
+    <div class="emoji-hero">🦜🐆🌿</div>
+    <h1>亚马逊热带雨林</h1>
+    <p class="subtitle">AMAZON RAINFOREST · 巴西 / 秘鲁 / 哥伦比亚</p>
+    <p class="desc">
+      地球之肺，覆盖南美 550 万平方公里的绿色海洋。这里孕育了全球十分之一的物种——金刚鹦鹉在树冠掠过绯红的身影，美洲豹在藤蔓间无声潜行，箭毒蛙用绚丽色彩警告来犯者。每一片叶子下都藏着未知的生命。
+    </p>
+    <div class="animals">
+      <span class="animal-chip"><span class="chip-icon">🦜</span>金刚鹦鹉</span>
+      <span class="animal-chip"><span class="chip-icon">🐆</span>美洲豹</span>
+      <span class="animal-chip"><span class="chip-icon">🐒</span>蜘蛛猴</span>
+      <span class="animal-chip"><span class="chip-icon">🦥</span>树懒</span>
+      <span class="animal-chip"><span class="chip-icon">🐸</span>箭毒蛙</span>
+      <span class="animal-chip"><span class="chip-icon">🦋</span>蓝闪蝶</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 3. 北极圈 ===== -->
+<section class="region bg-arctic" id="arctic">
+  <div class="moon"></div>
+  <div class="card">
+    <div class="emoji-hero">🐻‍❄️🦊❄️</div>
+    <h1>北极冰原</h1>
+    <p class="subtitle">ARCTIC TUNDRA · 斯瓦尔巴 / 格陵兰 / 加拿大北部</p>
+    <p class="desc">
+      世界尽头的白色荒野，极夜与极昼交替轮回。北极熊在浮冰间巡游，北极狐的毛皮随季节变换颜色，驯鹿群穿越苔原踏出千年不变的路线。极光在夜空中如绿色绸缎般摇曳，寂静中蕴藏着最顽强的生命力。
+    </p>
+    <div class="animals">
+      <span class="animal-chip"><span class="chip-icon">🐻‍❄️</span>北极熊</span>
+      <span class="animal-chip"><span class="chip-icon">🦊</span>北极狐</span>
+      <span class="animal-chip"><span class="chip-icon">🦌</span>驯鹿</span>
+      <span class="animal-chip"><span class="chip-icon">🦭</span>环斑海豹</span>
+      <span class="animal-chip"><span class="chip-icon">🐺</span>北极狼</span>
+      <span class="animal-chip"><span class="chip-icon">🦉</span>雪鸮</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 4. 澳大利亚 ===== -->
+<section class="region bg-oceania" id="oceania">
+  <div class="sun"></div>
+  <div class="card">
+    <div class="emoji-hero">🦘🐨🌏</div>
+    <h1>澳大利亚红土大陆</h1>
+    <p class="subtitle">AUSTRALIAN OUTBACK · 乌鲁鲁 / 大堡礁</p>
+    <p class="desc">
+      一片被时间遗忘的古老大陆。袋鼠在红色荒漠上跳跃，考拉在桉树林中沉睡，鸭嘴兽在东部溪流中觅食。大堡礁的水下世界如同流动的万花筒，乌鲁鲁巨岩在日落时分燃烧成赤红——这是地球上最与世隔绝的生态系统。
+    </p>
+    <div class="animals">
+      <span class="animal-chip"><span class="chip-icon">🦘</span>红袋鼠</span>
+      <span class="animal-chip"><span class="chip-icon">🐨</span>考拉</span>
+      <span class="animal-chip"><span class="chip-icon">🦆</span>鸭嘴兽</span>
+      <span class="animal-chip"><span class="chip-icon">🦎</span>伞蜥</span>
+      <span class="animal-chip"><span class="chip-icon">🐦</span>鸸鹋</span>
+      <span class="animal-chip"><span class="chip-icon">🦜</span>彩虹吸蜜鹦鹉</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 5. 喜马拉雅 ===== -->
+<section class="region bg-himalaya" id="himalaya">
+  <div class="card">
+    <div class="emoji-hero">🐆🏔️🐐</div>
+    <h1>喜马拉雅山脉</h1>
+    <p class="subtitle">THE HIMALAYAS · 尼泊尔 / 西藏 / 不丹</p>
+    <p class="desc">
+      世界屋脊，雪峰如剑直刺苍穹。雪豹在海拔五千米的碎石坡上如幽灵般巡行，藏羚羊在高原上奔腾起一片金色烟尘。这里是地球的第三极，生命在稀薄空气和酷寒中进化出了最极致的形态。
+    </p>
+    <div class="animals">
+      <span class="animal-chip"><span class="chip-icon">🐆</span>雪豹</span>
+      <span class="animal-chip"><span class="chip-icon">🐐</span>藏羚羊</span>
+      <span class="animal-chip"><span class="chip-icon">🐂</span>野牦牛</span>
+      <span class="animal-chip"><span class="chip-icon">🦅</span>金雕</span>
+      <span class="animal-chip"><span class="chip-icon">🐒</span>川金丝猴</span>
+      <span class="animal-chip"><span class="chip-icon">🐻</span>喜马拉雅棕熊</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 6. 深海 ===== -->
+<section class="region bg-deepsea" id="deepsea">
+  <div class="card">
+    <div class="emoji-hero">🐋🐙🐢</div>
+    <h1>深海世界</h1>
+    <p class="subtitle">THE DEEP OCEAN · 马里亚纳海沟 / 大西洋中脊</p>
+    <p class="desc">
+      地球最后的未知疆域，覆盖了这颗星球 70% 的表面。座头鲸在蓝色深渊中吟唱跨越千里的歌声，发光水母在永恒黑暗中绽放冷蓝色的光，海龟穿越整片大洋回到出生的沙滩。深海之下，藏着比外太空更多的未解之谜。
+    </p>
+    <div class="animals">
+      <span class="animal-chip"><span class="chip-icon">🐋</span>蓝鲸</span>
+      <span class="animal-chip"><span class="chip-icon">🐙</span>巨型章鱼</span>
+      <span class="animal-chip"><span class="chip-icon">🐢</span>棱皮龟</span>
+      <span class="animal-chip"><span class="chip-icon">🪼</span>深海管水母</span>
+      <span class="animal-chip"><span class="chip-icon">🦈</span>鲸鲨</span>
+      <span class="animal-chip"><span class="chip-icon">🐠</span>珊瑚礁鱼群</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 7. 撒哈拉沙漠 ===== -->
+<section class="region bg-sahara" id="sahara">
+  <div class="sun"></div>
+  <div class="card">
+    <div class="emoji-hero">🐪🦊🏜️</div>
+    <h1>撒哈拉沙漠</h1>
+    <p class="subtitle">SAHARA DESERT · 摩洛哥 / 埃及 / 毛里塔尼亚</p>
+    <p class="desc">
+      世界上最大的炎热沙漠，沙丘如金色海浪般起伏连绵。单峰驼在烈日下穿越无垠沙海，耳廓狐的大耳朵在夜风中捕捉最细微的声响。当太阳沉入沙丘背后，银河在洁净无光的夜空中倾泻而下——极致的荒芜中蕴含着极致的美。
+    </p>
+    <div class="animals">
+      <span class="animal-chip"><span class="chip-icon">🐪</span>单峰骆驼</span>
+      <span class="animal-chip"><span class="chip-icon">🦊</span>耳廓狐</span>
+      <span class="animal-chip"><span class="chip-icon">🦂</span>沙漠蝎</span>
+      <span class="animal-chip"><span class="chip-icon">🦎</span>棘蜥</span>
+      <span class="animal-chip"><span class="chip-icon">🐐</span>努比亚羱羊</span>
+      <span class="animal-chip"><span class="chip-icon">🦅</span>埃及秃鹫</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 8. 东南亚热带 ===== -->
+<section class="region bg-asia" id="asia">
+  <div class="card">
+    <div class="emoji-hero">🐅🐘🌴</div>
+    <h1>东南亚雨林</h1>
+    <p class="subtitle">SOUTHEAST ASIA · 泰国 / 印度尼西亚 / 越南</p>
+    <p class="desc">
+      地球上最古老的雨林之一，湿热空气中弥漫着茉莉与香茅的气息。印支虎在竹林中迈着无声的步伐，亚洲象家族在河流边沐浴嬉戏，红毛猩猩在高高的树冠上用枝叶搭筑夜晚的巢。这里是龙脑香科巨树的王国，也是万千生命交织的热带交响。
+    </p>
+    <div class="animals">
+      <span class="animal-chip"><span class="chip-icon">🐅</span>印支虎</span>
+      <span class="animal-chip"><span class="chip-icon">🐘</span>亚洲象</span>
+      <span class="animal-chip"><span class="chip-icon">🦧</span>红毛猩猩</span>
+      <span class="animal-chip"><span class="chip-icon">🦚</span>绿孔雀</span>
+      <span class="animal-chip"><span class="chip-icon">🐉</span>科莫多巨蜥</span>
+      <span class="animal-chip"><span class="chip-icon">🦏</span>爪哇犀牛</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Navigation ===== -->
+<nav class="nav-dots" id="navDots"></nav>
+
+<script>
+  const regions = ['hero', 'savanna', 'amazon', 'arctic', 'oceania', 'himalaya', 'deepsea', 'sahara', 'asia'];
+  const navContainer = document.getElementById('navDots');
+
+  // Build nav dots
+  regions.forEach((id, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot';
+    dot.title = id;
+    dot.onclick = () => document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    navContainer.appendChild(dot);
+  });
+
+  // Update active dot on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const idx = regions.indexOf(entry.target.id);
+        document.querySelectorAll('.nav-dot').forEach((d, i) => {
+          d.classList.toggle('active', i === idx);
+        });
+      }
+    });
+  }, { threshold: 0.5 });
+
+  regions.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+
+  // Stars background for hero
+  const starsContainer = document.getElementById('stars-container');
+  for (let i = 0; i < 120; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.cssText = `
+      left: ${Math.random() * 100}%;
+      top: ${Math.random() * 100}%;
+      width: ${1 + Math.random() * 3}px;
+      height: ${1 + Math.random() * 3}px;
+      animation-duration: ${2 + Math.random() * 4}s;
+      animation-delay: ${Math.random() * 5}s;
+    `;
+    starsContainer.appendChild(star);
+  }
+</script>
+</body>
+</html>
